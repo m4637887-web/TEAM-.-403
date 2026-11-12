@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محمود برو مانجر - الدوري المصري 2026/2027</title>
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 15px; }
+        .container { max-width: 650px; margin: 0 auto; }
+        h1, h2, h3 { text-align: center; margin-bottom: 15px; color: var(--primary); }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        button { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; transition: 0.2s; }
+        button:hover { background: var(--primary-dark); }
+        button.secondary { background: #475569; }
+        button.secondary:hover { background: #334155; }
+        button.danger { background: var(--danger); }
+        select, input { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; background: var(--bg); border: 1px solid var(--border); color: white; border-radius: 8px; }
+        .flex { display: flex; gap: 10px; }
+        .flex-1 { flex: 1; }
+        .stat-box { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 10px; font-size: 0.9rem; }
+        .news-item { border-right: 3px solid var(--accent); padding-right: 10px; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted); background: rgba(0,0,0,0.15); padding: 8px; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+        th, td { padding: 8px; text-align: center; border-bottom: 1px solid var(--border); }
+        th { background: rgba(16, 185, 129, 0.1); color: var(--primary); }
+        .pitch { background: #15803d; border: 2px solid white; border-radius: 10px; padding: 15px; min-height: 220px; margin-bottom: 15px; text-align: center; position: relative; }
+        .player-badge { background: rgba(0,0,0,0.7); border: 1px solid var(--primary); padding: 6px 10px; border-radius: 8px; display: inline-block; margin: 4px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <!-- شاشة البداية -->
+    <div id="screen-home" class="card">
+        <h1>⚽ محمود برو مانجر</h1>
+        <h3>الدوري المصري الممتاز (2026/2027)</h3>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px;">النسخة الكاملة: 16 فريقاً، تشكيلة، تبديلات حية، سوق انتقالات، وموسم احترافي!</p>
+        
+        <label>اختر ناديك المفضل:</label>
+        <select id="team-select">
+            <option value="الاهلي">النادي الأهلي (84)</option>
+            <option value="الزمالك">نادي الزمالك (82)</option>
+            <option value="بيراميدز">نادي بيراميدز (83)</option>
+            <option value="المصري">النادي المصري (78)</option>
+            <option value="زد">نادي زد إف سي (77)</option>
+            <option value="الاتحاد">نادي الاتحاد السكندري (76)</option>
+            <option value="سيراميكا">نادي سيراميكا كليوباترا (77)</option>
+            <option value="إنبي">نادي إنبي (77)</option>
+            <option value="البنك الأهلي">نادي البنك الأهلي (77)</option>
+            <option value="الجونة">نادي الجونة (74)</option>
+            <option value="سموحة">نادي سموحة (76)</option>
+            <option value="مودرن سبورت">نادي مودرن سبورت (75)</option>
+            <option value="غزل المحلة">نادي غزل المحلة (73)</option>
+            <option value="أبو قير للأسمدة">نادي أبو قير للأسمدة (70)</option>
+            <option value="وادي دجلة">نادي وادي دجلة (73)</option>
+            <option value="القناة">نادي القناة (71)</option>
+        </select>
+
+        <button onclick="initGame()">بدء مسيرة التدريب 🚀</button>
+    </div>
+</div>
+
+<script>
+    let gameState = {
+        team: '',
+        budget: 50,
+        points: 0,
+        played: 0,
+        wins: 0,
+        draws: 0,
+        losses: 0,
+        tactics: 'متوازن',
+        leagueTable: [],
+        news: [],
+        squad: [
+            {name: "حارس مرمى أساسي", pos: "GK", ovr: 80},
+            {name: "مدافع صلب 1", pos: "CB", ovr: 79},
+            {name: "مدافع صلب 2", pos: "CB", ovr: 78},
+            {name: "ظهير أيمن", pos: "RB", ovr: 77},
+            {name: "ظهير أيسر", pos: "LB", ovr: 77},
+            {name: "محور ارتكاز", pos: "CDM", ovr: 80},
+            {name: "لاعب وسط ملعب 1", pos: "CM", ovr: 81},
+            {name: "لاعب وسط ملعب 2", pos: "CM", ovr: 79},
+            {name: "جناح أيمن", pos: "RW", ovr: 82},
+            {name: "جناح أيسر", pos: "LW", ovr: 81},
+            {name: "مهاجم صريح", pos: "ST", ovr: 83},
+            // الدكة
+            {name: "حارس بديل", pos: "GK", ovr: 74},
+            {name: "مدافع بديل", pos: "CB", ovr: 73},
+            {name: "وسط بديل", pos: "CM", ovr: 75},
+            {name: "مهاجم بديل", pos: "ST", ovr: 76}
+        ],
+        marketPlayers: [
+            {name: "محمد الشناوي", pos: "GK", ovr: 85, price: 15},
+            {name: "أحمد سيد زيزو", pos: "RW", ovr: 86, price: 20},
+            {name: "إمام عاشور", pos: "CM", ovr: 87, price: 25},
+            {name: "مصطفى فتحي", pos: "RW", ovr: 80, price: 12},
+            {name: "رمضان صبحي", pos: "LW", ovr: 82, price: 18}
+        ]
+    };
+
+    const teamsList = [
+        {name: "الاهلي", ovr: 84}, {name: "الزمالك", ovr: 82}, {name: "بيراميدز", ovr: 83},
+        {name: "المصري", ovr: 78}, {name: "زد", ovr: 77}, {name: "الاتحاد", ovr: 76},
+        {name: "سيراميكا", ovr: 77}, {name: "إنبي", ovr: 77}, {name: "البنك الأهلي", ovr: 77},
+        {name: "الجونة", ovr: 74}, {name: "سموحة", ovr: 76}, {name: "مودرن سبورت", ovr: 75},
+        {name: "غزل المحلة", ovr: 73}, {name: "أبو قير للأسمدة", ovr: 70}, {name: "وادي دجلة", ovr: 73}, {name: "القناة", ovr: 71}
+    ];
+
+    function initGame() {
+        const select = document.getElementById('team-select');
+        gameState.team = select.value;
+        gameState.leagueTable = teamsList.map(t => ({name: t.name, pts: 0, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0}));
+        renderDashboard();
+    }
+
+    function renderDashboard() {
+        const app = document.getElementById('app');
+        app.innerHTML = `
+            <div class="card">
+                <h2>إدارة نادي: ${gameState.team} 🏟️</h2>
+                <div class="flex">
+                    <div class="flex-1 stat-box">النقاط: <b>${gameState.points}</b></div>
+                    <div class="flex-1 stat-box">الخزينة: <b>${gameState.budget} م.ج</b></div>
+                    <div class="flex-1 stat-box">المباريات: <b>${gameState.played}/30</b></div>
+                </div>
+                <div class="flex" style="margin-top: 10px;">
+                    <div class="flex-1 stat-box">الخطة: <b>${gameState.tactics}</b></div>
+                    <button class="secondary" onclick="changeTactics()" style="margin-top:0; padding:5px;">تغيير الخطة</button>
+                </div>
+                <button onclick="playMatch()">لعب الجولة القادمة ⚽</button>
+                <button class="secondary" onclick="renderSquad()">إدارة التشكيلة والدكة 👕</button>
+                <button class="secondary" onclick="renderMarket()">سوق الانتقالات 🛒</button>
+                <button class="secondary" onclick="showTable()">جدول الترتيب 📊</button>
+                <button class="secondary" onclick="showNews()">سوشيال ميديا والأخبار 📱</button>
+            </div>
+        `;
+    }
+
+    function changeTactics() {
+        const tactics = ['متوازن', 'هجومي كاسح', 'دفاع صلب ومرتدات'];
+        let currentIndex = tactics.indexOf(gameState.tactics);
+        gameState.tactics = tactics[(currentIndex + 1) % tactics.length];
+        renderDashboard();
+    }
+
+    function renderSquad() {
+        const app = document.getElementById('app');
+        let starting11 = gameState.squad.slice(0, 11).map((p, i) => `<div class="player-badge"><b>${p.pos}</b>: ${p.name} (${p.ovr})</div>`).join('');
+        let subs = gameState.squad.slice(11).map((p, i) => `<div class="player-badge" style="border-color:var(--accent);">دكة: ${p.name} (${p.ovr})</div>`).join('');
+
+        app.innerHTML = `
+            <div class="card">
+                <h2>تشكيلة الفريق ودكة البدلاء 📋</h2>
+                <div class="pitch">
+                    <p style="color: #a7f3d0; margin-bottom: 8px; font-weight: bold;">الأساسيون (11 لاعب)</p>
+                    ${starting11}
+                </div>
+                <div class="card" style="background: rgba(0,0,0,0.2);">
+                    <p style="color: var(--accent); margin-bottom: 8px; font-weight: bold;">البدلاء</p>
+                    ${subs}
+                </div>
+                <button onclick="renderDashboard()">العودة للرئيسية 🏠</button>
+            </div>
+        `;
+    }
+
+    function renderMarket() {
+        const app = document.getElementById('app');
+        let marketHtml = gameState.marketPlayers.map((p, index) => `
+            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-bottom: 8px;">
+                <span><b>${p.name}</b> (${p.pos}) - OVR: ${p.ovr}</span>
+                <button style="width: auto; margin-top: 0; padding: 5px 10px;" onclick="buyPlayer(${index})">شراء (${p.price} م.ج)</button>
+            </div>
+        `).join('');
+
+        app.innerHTML = `
+            <div class="card">
+                <h2>سوق الانتقالات الصيفي 🛒</h2>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">الخزينة المتاحة: ${gameState.budget} مليون ج.م</p>
+                ${marketHtml}
+                <button style="margin-top: 10px;" onclick="renderDashboard()">العودة للرئيسية 🏠</button>
+            </div>
+        `;
+    }
+
+    function buyPlayer(index) {
+        let player = gameState.marketPlayers[index];
+        if (gameState.budget >= player.price) {
+            gameState.budget -= player.price;
+            gameState.squad.push(player);
+            gameState.marketPlayers.splice(index, 1);
+            alert(`تم التعاقد مع النجم ${player.name} بنجاح! 🎉`);
+            renderMarket();
+        } else {
+            alert('الخزينة لا تكفي لتمام الصفقة! ❌');
+        }
+    }
+
+    function playMatch() {
+        if (gameState.played >= 30) {
+            checkSeasonEnd();
+            return;
+        }
+
+        gameState.played++;
+        let opponents = teamsList.filter(t => t.name !== gameState.team);
+        let opponent = opponents[Math.floor(Math.random() * opponents.length)];
+        
+        let squadOvr = Math.floor(gameState.squad.reduce((acc, p) => acc + p.ovr, 0) / gameState.squad.length);
+        let tacticBonus = gameState.tactics === 'هجومي كاسح' ? 3 : (gameState.tactics === 'دفاع صلب ومرتدات' ? 2 : 0);
+        let myScore = Math.floor(Math.random() * 3) + (squadOvr > opponent.ovr ? 1 : 0) + (tacticBonus > 1 ? 1 : 0);
+        let oppScore = Math.floor(Math.random() * 3);
+
+        let resultText = "";
+        if (myScore > oppScore) {
+            gameState.wins++;
+            gameState.points += 3;
+            gameState.budget += 10;
+            resultText = `انتصار رائع لفريقك (${myScore} - ${oppScore}) ضد ${opponent.name}! 🏆 (+10 مليون مكافأة)`;
+        } else if (myScore === oppScore) {
+            gameState.draws++;
+            gameState.points += 1;
+            gameState.budget += 3;
+            resultText = `تعادل مثير (${myScore} - ${oppScore}) مع ${opponent.name} 🤝 (+3 مليون مكافأة)`;
+        } else {
+            gameState.losses++;
+            gameState.budget += 1;
+            resultText = `خسارة قاسية (${myScore} - ${oppScore}) أمام ${opponent.name} 😞 (+1 مليون للمشاركة)`;
+        }
+
+        gameState.news.unshift(`جولة ${gameState.played}: ${resultText}`);
+
+        const app = document.getElementById('app');
+        app.innerHTML = `
+            <div class="card" style="text-align: center;">
+                <h2>نتيجة المباراة ⏱️</h2>
+                <h1 style="margin: 20px 0;">${gameState.team} ${myScore} - ${oppScore} ${opponent.name}</h1>
+                <p style="font-size: 1rem; margin-bottom: 20px; color: var(--accent);">${resultText}</p>
+                <button onclick="renderDashboard()">الاستمرار للمنطقة الفنية 🏠</button>
+            </div>
+        `;
+    }
+
+    function showTable() {
+        const app = document.getElementById('app');
+        let rows = gameState.leagueTable.sort((a,b) => b.pts - a.pts).map((t, index) => `
+            <tr>
+                <td>${index + 1}</td>
+                <td><b>${t.name}</b></td>
+                <td>${t.p}</td>
+                <td>${t.pts}</td>
+            </tr>
+        `).join('');
+
+        app.innerHTML = `
+            <div class="card">
+                <h2>جدول ترتيب الدوري المصري 📊</h2>
+                <table>
+                    <tr><th>#</th><th>الفريق</th><th>لعب</th><th>نقاط</th></tr>
+                    ${rows}
+                </table>
+                <button style="margin-top: 15px;" onclick="renderDashboard()">رجوع</button>
+            </div>
+        `;
+    }
+
+    function showNews() {
+        const app = document.getElementById('app');
+        let newsHtml = gameState.news.length > 0 ? gameState.news.map(n => `<div class="news-item">${n}</div>`).join('') : '<p>لا توجد أخبار حالية، الجماهير تنتظر مبادرتك!</p>';
+        app.innerHTML = `
+            <div class="card">
+                <h2>سوشيال ميديا وتفاعل الجماهير 📱</h2>
+                <div style="margin-top: 15px;">${newsHtml}</div>
+                <button style="margin-top: 15px;" onclick="renderDashboard()">رجوع</button>
+            </div>
+        `;
+    }
+
+    function checkSeasonEnd() {
+        const app = document.getElementById('app');
+        app.innerHTML = `
+            <div class="card" style="text-align: center;">
+                <h2>🏆 نهاية الموسم الكروي 2026/2027</h2>
+                <p style="margin: 15px 0;">لقد أنهيت مباريات الدوري بنجاح يا كابتن محمود!</p>
+                <p style="color: var(--accent); margin-bottom: 15px;">إدارة النادي مسرورة بأدائك وتعرض عليك **تجديد العقد** لموسم إضافي، وهناك عروض من أندية منافسة تسعى لخطفك!</p>
+                <button onclick="location.reload()">بدء موسم جديد بالدوري 🔄</button>
+            </div>
+        `;
+    }
+</script>
+
+</body>
+</html>
